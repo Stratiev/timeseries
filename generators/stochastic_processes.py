@@ -1,10 +1,10 @@
-from time import perf_counter
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import time_func, simple_corr_matrix
+
 
 class Path:
     pass
+
 
 class Brownian(Path):
 
@@ -16,14 +16,17 @@ class Brownian(Path):
         self.T = T
         self.delta_t = delta_t
 
-    def generate_path(self):
+    def generate_path(self, seed=None):
+        np.random.seed(seed)
         sqrt_delta_t = np.sqrt(self.delta_t)
         self.t = np.arange(0, self.T, self.delta_t)
         x = 0
         self.y = [x]
         for _ in range(len(self.t)-1):
-            x += self.mu * self.delta_t + self.sigma * np.random.normal(0, sqrt_delta_t)
+            x += self.mu * self.delta_t\
+               + self.sigma * np.random.normal(0, sqrt_delta_t)
             self.y.append(x)
+
 
 class Lognormal(Path):
 
@@ -35,19 +38,23 @@ class Lognormal(Path):
         self.T = T
         self.delta_t = delta_t
 
-    def generate_path(self):
+    def generate_path(self, seed=None):
+        np.random.seed(seed)
         sqrt_delta_t = np.sqrt(self.delta_t)
         self.t = np.arange(0, self.T, self.delta_t)
         x = 1
         self.y = [x]
         for _ in range(len(self.t)-1):
-            x += x * self.mu * self.delta_t + x * self.sigma * np.random.normal(0, sqrt_delta_t)
+            x += x * self.mu * self.delta_t\
+               + x * self.sigma * np.random.normal(0, sqrt_delta_t)
             self.y.append(x)
+
 
 class OU(Path):
     """
     Ornstein-Uhlenbeck process.
     """
+
     def __init__(self, theta=0, sigma=1, T=1, delta_t=10**(-4)):
         self.t = None
         self.y = None
@@ -56,13 +63,15 @@ class OU(Path):
         self.T = T
         self.delta_t = delta_t
 
-    def generate_path(self):
+    def generate_path(self, seed=None):
+        np.random.seed(seed)
         sqrt_delta_t = np.sqrt(self.delta_t)
         self.t = np.arange(0, self.T, self.delta_t)
         x = 0
         self.y = [x]
         for _ in range(len(self.t)-1):
-            x += - self.theta * x * self.delta_t + self.sigma * np.random.normal(0, sqrt_delta_t)
+            x += - self.theta * x * self.delta_t\
+               + self.sigma * np.random.normal(0, sqrt_delta_t)
             self.y.append(x)
 
 
@@ -74,15 +83,12 @@ def correlate_brownian_paths_v2(paths, corr_matrix):
         p.y = y
     return paths
 
-    
+
 def quadratic_variation(path, T=None):
     variation = 0
     for i, _ in enumerate(path.y[:-1]):
         variation += (path.y[i+1] - path.y[i])**2
     return variation
-        
-
-
 
 
 if __name__ == "__main__":
@@ -94,4 +100,3 @@ if __name__ == "__main__":
     print(sum(variations)/len(variations))
     plt.plot(variations)
     plt.show()
-
