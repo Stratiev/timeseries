@@ -27,6 +27,7 @@ class Brownian(Path):
                + self.sigma * np.random.normal(0, sqrt_delta_t)
             self.y.append(x)
 
+
 class BrownianJump(Path):
 
     def __init__(self, mu=0, sigma=1, T=1, delta_t=10**(-4), jump_intensity=1, jump_size=0):
@@ -67,7 +68,7 @@ class BrownianJump(Path):
                 plt.plot(p.t, p.y)
             plt.show()
 
-class Lognormal(Path):
+class GeometricBrownian(Path):
 
     def __init__(self, mu=0, sigma=1, T=1, delta_t=10**(-4)):
         self.t = None
